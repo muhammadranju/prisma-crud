@@ -39,4 +39,48 @@ const userController = async (req, res) => {
   }
 };
 
-module.exports = { userController };
+const getUserController = async (req, res) => {
+  // const { id } = req.params;.
+
+  try {
+    const user = await prisma.user.findRaw({});
+
+    // if (!user) {
+    //   return res.status(404).json({ message: "User not found" });
+    // }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    // Handle Prisma or MongoDB errors
+    if (error.code === "P2002") {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getUserByIdController = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    console.log(user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    // Handle Prisma or MongoDB errors
+    if (error.code === "P2002") {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(500).json({ message: error.message });
+  }
+};
+module.exports = { userController, getUserController, getUserByIdController };
