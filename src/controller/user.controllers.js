@@ -1,5 +1,5 @@
 const prisma = require("../db/db.config");
-
+// Create a new user
 const userController = async (req, res) => {
   const { email, name, password } = req.body;
 
@@ -39,36 +39,28 @@ const userController = async (req, res) => {
   }
 };
 
+// Get all users
 const getUserController = async (req, res) => {
-  // const { id } = req.params;.
-
   try {
-    const user = await prisma.user.findRaw({});
-
-    // if (!user) {
-    //   return res.status(404).json({ message: "User not found" });
-    // }
+    const user = await prisma.user.findMany({});
 
     return res.status(200).json(user);
   } catch (error) {
-    // Handle Prisma or MongoDB errors
-    if (error.code === "P2002") {
-      return res.status(404).json({ message: "User not found" });
-    }
+    console.log(error);
     return res.status(500).json({ message: error.message });
   }
 };
 
+// Get user by id
 const getUserByIdController = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
         id: id,
       },
     });
-    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -83,4 +75,58 @@ const getUserByIdController = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-module.exports = { userController, getUserController, getUserByIdController };
+
+const updateUserController = async (req, res) => {
+  const { id } = req.params;
+  const { name, email } = req.body;
+
+  try {
+    const user = await prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name,
+        email,
+      },
+    });
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    // Handle Prisma or MongoDB errors
+    if (error.code === "P2002") {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const deleteUserController = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await prisma.user.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    // Handle Prisma or MongoDB errors
+    if (error.code === "P2002") {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  userController,
+  getUserController,
+  getUserByIdController,
+  deleteUserController,
+  updateUserController,
+};

@@ -3,12 +3,15 @@ const {
   userController,
   getUserController,
   getUserByIdController,
+  deleteUserController,
+  updateUserController,
+  //
 } = require("../controller/user.controllers");
 
 router.post("/", userController);
 router.get("/", getUserController);
 router.get("/:id", getUserByIdController);
-router.put("/", userController);
-router.delete("/", userController);
+router.put("/:id", updateUserController);
+router.delete("/:id", deleteUserController);
 
 module.exports = router;
