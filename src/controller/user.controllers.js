@@ -97,6 +97,7 @@ const updateUserController = async (req, res) => {
     // Handle Prisma or MongoDB errors
     if (error.code === "P2002") {
       return res.status(404).json({ message: "User not found" });
+      z;
     }
     return res.status(500).json({ message: error.message });
   }
