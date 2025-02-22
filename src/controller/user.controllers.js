@@ -26,16 +26,27 @@ const userController = async (req, res) => {
       },
     });
 
-    return res.status(201).json(user);
+    return res.status(201).json({
+      status: 201,
+      success: true,
+      message: "User created successfully",
+      data: user,
+    });
   } catch (error) {
     // Handle Prisma or MongoDB errors
     if (error.code === "P2031") {
       return res.status(500).json({
+        status: 500,
+        success: false,
         message:
           "MongoDB needs to be configured as a replica set. Please refer to: https://pris.ly/d/mongodb-replica-set",
       });
     }
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({
+      status: 500,
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -62,20 +73,34 @@ const getUserByIdController = async (req, res) => {
       },
     });
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        status: 404,
+        success: false,
+        message: "User not found",
+      });
     }
 
-    return res.status(200).json(user);
+    return res.status(200).json({
+      status: 200,
+      success: true,
+      message: "User found successfully",
+      data: user,
+    });
   } catch (error) {
     console.log(error);
     // Handle Prisma or MongoDB errors
     if (error.code === "P2002") {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        status: 404,
+        success: false,
+        message: "User not found",
+      });
     }
     return res.status(500).json({ message: error.message });
   }
 };
 
+// Create user
 const updateUserController = async (req, res) => {
   const { id } = req.params;
   const { name, email } = req.body;
@@ -91,7 +116,12 @@ const updateUserController = async (req, res) => {
       },
     });
 
-    return res.status(200).json(user);
+    return res.status(200).json({
+      status: 200,
+      success: true,
+      message: "User updated successfully",
+      data: user,
+    });
   } catch (error) {
     console.log(error);
     // Handle Prisma or MongoDB errors
@@ -113,7 +143,12 @@ const deleteUserController = async (req, res) => {
       },
     });
 
-    return res.status(200).json(user);
+    return res.status(200).json({
+      status: 200,
+      success: true,
+      message: "User deleted successfully",
+      data: user,
+    });
   } catch (error) {
     console.log(error);
     // Handle Prisma or MongoDB errors
